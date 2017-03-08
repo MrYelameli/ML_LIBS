@@ -15,13 +15,13 @@ tr_data=dlmread('../Data/train_data.txt');
 te_data=dlmread('../Data/test_data.txt');
 
 %The next step is to normalize the data, the data is normalized 
-norm_tr=featureNormalize(tr_data);
-norm_te=featureNormalize(te_data);
+norm_tr,mu,sigma=featureNormalize(tr_data);
+norm_te=featureNormalize(te_data,mu,sigma);
 
 %the next step is data reduction using PCA algorithm 
 
 pca_tr,PC=prin_comp_ana(norm_tr);
-pca_te=[norm_te(:,1) norm_te(:,2:end)*PC];
+pca_te=prin_comp_ana(norm_te,PC);
 
 NTrain=size(pca_tr,1);
 trainData=pca_tr(:,2:end);
