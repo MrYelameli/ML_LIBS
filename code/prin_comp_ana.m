@@ -1,4 +1,5 @@
-function [pc_data]=prin_comp_ana(data)
+% return both pc_data and PC matrix
+function [pc_data, PC]=prin_comp_ana(data)
 X=data(:,2:end);
 IDX=data(:,1);
 [m,n]=size(X);
