@@ -20,8 +20,8 @@ norm_te=featureNormalize(te_data);
 
 %the next step is data reduction using PCA algorithm 
 
-pca_tr=prin_comp_ana(norm_tr);
-pca_te=prin_comp_ana(norm_te);
+pca_tr,PC=prin_comp_ana(norm_tr);
+pca_te=[norm_te(:,1) norm_te(:,2:end)*PC];
 
 NTrain=size(pca_tr,1);
 trainData=pca_tr(:,2:end);
