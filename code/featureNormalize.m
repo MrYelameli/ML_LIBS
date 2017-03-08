@@ -1,6 +1,6 @@
 % this function normalizes the data with mean=0 and standard deviation with
 % 1
-function [norm]=featureNormalize(data)
+function [norm,mu,sigma]=featureNormalize(data)
 X=data(:,2:end);
 IDX=data(:,1);
 mu = mean(X);
