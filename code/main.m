@@ -36,44 +36,58 @@ testLabel=pca_te(:,1);
 
 bestcv = 0;
 
-log2c =1:10:20 ; 
-log2g =0.1:0.1:0.2;
-dimen=25:25:50;
+log2c =200 ; 
+log2g =0.0976; %for RBF
+dimen=555;
 bestcv=zeros(length(log2c),1);
+bestg=zeros(length(log2g),1)
 
-cv=zeros(length(log2c),length(dimen),length(log2g));
-for i=1:length(log2c)
-    for k =1:length(log2g)
+cv=zeros(length(log2c),length(dimen),length(log2g)); %for RBF
+
+%cv=zeros(length(log2c),length(dimen)); %for Linear
+
+for i=1:length(log2c) 
+    for k =1:length(log2g) %for RBF
     for j=1:length(dimen)
         
         
         % for RBF
         cmd = ['-q -c ', num2str(log2c(i)), ' -g ', num2str(log2g)];
         
+        %for Linear
+%         cmd=['-q -c', num2str(log2c(i))];
+        
         trD=trainData(:,1:dimen(j));
-        cv(i,j) = get_cv_ac(trainLabel, trD, cmd, 3);
+        cv(i,j) = get_cv_ac(trainLabel, trD, cmd, 3); 
+        
+               
         if (cv(i,j) >= bestcv),
-            bestcv = cv(i,j); bestc = log2c ; bestDimen=dimen(j); bestg=log2g;
+            bestcv = cv(i,j); bestc = log2c ; bestDimen=dimen(j);
+            bestg=log2g; %for RBF
         end
         
         %for RBF
         fprintf('%g %g %g %g (best c=%g, bestg=%g, rate=%g, bestDimen=%g)\n', log2c, log2g, cv(i,j), dimen(j), bestc, bestg, bestcv, bestDimen);
         
-        % for Linear
-        %fprintf('%g %g %g (best c=%g, rate=%g, bestDimen=%g)\n',log2c(i),cv(i,j),dimen(j),bestc,bestcv,bestDimen);
+         %for Linear
+%         fprintf('%g %g %g (best c=%g, rate=%g, bestDimen=%g)\n',log2c(i),cv(i,j),dimen(j),bestc,bestcv,bestDimen);
         
         
     end
-    end
+ end
 end
 
 %After getting best parameters, check the accuracy on test dataset. 
 TRD=trainData(:,1:bestDimen);
-bestParam = ['-q -c ', num2str(bestc),' -g ', num2str(bestg)];
+%for RBF
+bestParam = ['-q -c ', num2str(bestc),' -g ', num2str(bestg)]; 
 
+%for Linear
+% bestParam = ['-q -c', num2str(bestc)];
 model = ovrtrain(trainLabel, TRD, bestParam);
 
-[predict_label, accuracy, prob_values] = ovrpredict(testLabel, testData, model);
+TRD_test=testData(:,1:bestDimen);
+[predict_label, accuracy, prob_values] = ovrpredict(testLabel, TRD_test, model);
 
-%this gives the accuracy on test dataset. 
+%this gives the accuracy on test dataset 
 fprintf('Accuracy = %g%%\n', accuracy * 100);
